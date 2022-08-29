@@ -1,16 +1,13 @@
 mod cursor;
-use rand::seq::SliceRandom;
 
 use std::ops::ControlFlow;
 
 use bevy::{
-    input::mouse::{self, MouseMotion},
+    input::mouse::{MouseMotion},
     prelude::*,
-    transform,
-    window::WindowResized,
 };
 use bevy_easings::Lerp;
-use bevy_prototype_lyon::{draw, prelude::*, render::Shape};
+use bevy_prototype_lyon::{prelude::*};
 use cursor::{Cursor, CursorPlugin};
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
@@ -74,7 +71,6 @@ struct TextDetails {
 
 fn setup_ui(mut commands: Commands, text_details: Res<TextDetails>) {
     let existing_style = text_details.text_style.clone().unwrap();
-    let existing_align = text_details.text_alignment.clone().unwrap();
     commands
         .spawn_bundle(
             TextBundle::from_sections([
@@ -413,8 +409,6 @@ enum CombatStep {
     LineUp,
     Attack,
     Next,
-    Done,
-    LevelEnd,
 }
 
 struct CurrentLevel(i8);
@@ -815,8 +809,6 @@ fn combat_update(
                 }
                 let target_x = -150.0 - (i as f32 * 80.);
 
-                let v = target_x / t.translation.x;
-
                 t.translation.x -= (t.translation.x - target_x) / 10.0;
 
                 if (t.translation.x - target_x).abs() <= 2.0 {
@@ -1057,15 +1049,6 @@ fn follow_mouse(
     }
 }
 
-impl Orb {
-    fn combine(&self, orb: Self) -> Orb {
-        Orb {
-            damage: self.damage + orb.damage,
-            health: self.health + orb.health,
-            ..Default::default()
-        }
-    }
-}
 
 impl PluginGroup for CorePlugins {
     fn build(&mut self, group: &mut bevy::app::PluginGroupBuilder) {
